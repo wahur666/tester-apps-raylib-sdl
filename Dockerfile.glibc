@@ -1,14 +1,19 @@
-FROM alpine:3.22 AS builder
+FROM debian:bullseye AS builder
 
-RUN apk add --no-cache \
-        build-base \
-        cmake \
-        file \
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+        ca-certificates \
         git \
-        ninja \
-        pkgconf \
-        linux-headers \
-        wayland-dev \
+        pkg-config \
+        python3 \
+        python3-pip \
+        libegl1-mesa-dev \
+        libgl1-mesa-dev \
+        libwayland-dev \
+        libwayland-bin \
         wayland-protocols \
         libxkbcommon-dev \
         libx11-dev \
@@ -18,8 +23,10 @@ RUN apk add --no-cache \
         libxfixes-dev \
         libxrandr-dev \
         libxrender-dev \
-        libxscrnsaver-dev \
-        libxtst-dev
+        libxss-dev \
+        libxtst-dev \
+    && python3 -m pip install --no-cache-dir "cmake>=3.25,<4" ninja \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /src
 COPY . .
@@ -29,25 +36,17 @@ RUN sh ./deps.sh
 RUN cmake -S . -B build -G Ninja \
         -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_C_FLAGS_RELEASE="-O2 -DNDEBUG" \
-        -DCMAKE_EXE_LINKER_FLAGS="-static -static-libgcc" \
-        -DOPENGL_VERSION=Software \
         -DSDL_AUDIO=OFF \
         -DSDL_CAMERA=ON \
         -DSDL_DBUS=OFF \
-        -DSDL_DEPS_SHARED=OFF \
         -DSDL_HAPTIC=OFF \
         -DSDL_JOYSTICK=OFF \
         -DSDL_LIBUDEV=OFF \
         -DSDL_SENSOR=OFF \
         -DSDL_WAYLAND=ON \
         -DSDL_WAYLAND_LIBDECOR=OFF \
-        -DSDL_WAYLAND_SHARED=OFF \
         -DSDL_X11=ON \
-        -DSDL_X11_SHARED=OFF \
-    && cmake --build build --target touch_ray_demo webcam_preview --parallel \
-    && file build/touch_ray_demo build/webcam_preview \
-    && ! ldd build/touch_ray_demo \
-    && ! ldd build/webcam_preview
+    && cmake --build build --target touch_ray_demo webcam_preview --parallel
 
 FROM scratch AS export
 COPY --from=builder /src/build/touch_ray_demo /touch_ray_demo

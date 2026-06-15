@@ -52,20 +52,42 @@ produces a build artifact; run the application natively on the target system.
 The Docker build also runs `deps.sh`, so a fresh clone can be built directly as
 long as Docker has network access during the build.
 
-## Build musl binaries
+## Build Linux binaries
+
+The Alpine/musl build is the most self-contained option. It links the final
+executables statically, uses raylib's software renderer to avoid a runtime
+OpenGL/Mesa dependency, and asks SDL to link X11/Wayland support instead of
+loading those dependency libraries dynamically.
 
 Build from the project directory:
 
 ```sh
-docker build --target export --output type=local,dest=dist .
+docker build --target export --output type=local,dest=dist/linux-musl .
 ```
 
-The resulting executables are written to `dist/touch_ray_demo` and
-`dist/webcam_preview`. They are Linux musl binaries and will not run directly on
-Windows. They are not fully static: X11 or Wayland, plus OpenGL/EGL, remain
-runtime dependencies on the target musl-based Linux system.
+The resulting executables are written to `dist/linux-musl/touch_ray_demo` and
+`dist/linux-musl/webcam_preview`. They are Linux musl binaries and will not run
+directly on Windows. The Docker build fails if `ldd` can inspect them as dynamic
+executables, so there should be no runtime dependency on the musl loader.
 
-The Docker build enables both SDL video backends:
+The static musl build still needs a compatible running display server at
+runtime. It can talk to X11/XWayland or Wayland, but it cannot create a display
+session by itself.
+
+If the static musl build does not work on the target display stack, build the
+glibc fallback. It is built on Debian 11, which uses glibc 2.31, matching Ubuntu
+20.04 and older than Ubuntu 22.04/24.04. Binaries built against an older glibc
+usually run on newer glibc systems, but this variant is less self-contained than
+the musl build.
+
+```sh
+docker build -f Dockerfile.glibc --target export --output type=local,dest=dist/linux-glibc .
+```
+
+The resulting executables are written to `dist/linux-glibc/touch_ray_demo` and
+`dist/linux-glibc/webcam_preview`.
+
+Both Docker builds enable both SDL video backends:
 
 - X11, for classic X sessions and XWayland.
 - Wayland, for native Wayland sessions.
@@ -80,6 +102,15 @@ SDL_VIDEODRIVER=wayland ./touch_ray_demo
 
 The build does not detect the Docker host display server, because Docker builds
 can run on a different machine than the final runtime target.
+
+Chrome and ffmpeg on the target machine are good signs, but they do not
+guarantee every runtime library this project needs. If a binary fails to start,
+check missing dynamic libraries with:
+
+```sh
+ldd ./touch_ray_demo
+ldd ./webcam_preview
+```
 
 ## Build on Windows
 
