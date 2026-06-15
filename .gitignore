@@ -1,0 +1,7 @@
+build-windows-release/
+cmake-build-debug/
+dist/
+raylib-6.0/
+SDL-release-3.4.10/
+.idea
+cmake-build-*/

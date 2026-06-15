@@ -1,0 +1,9 @@
+services:
+  build:
+    build:
+      context: .
+      target: builder
+    volumes:
+      - ./dist:/out
+    entrypoint: ["/bin/sh", "-c"]
+    command: ["cp /src/build/touch_ray_demo /out/touch_ray_demo && chmod +x /out/touch_ray_demo"]
