@@ -6,4 +6,4 @@ services:
     volumes:
       - ./dist:/out
     entrypoint: ["/bin/sh", "-c"]
-    command: ["cp /src/build/touch_ray_demo /out/touch_ray_demo && chmod +x /out/touch_ray_demo"]
+    command: ["cp /src/build/touch_ray_demo /src/build/webcam_preview /out/ && chmod +x /out/touch_ray_demo /out/webcam_preview"]

@@ -52,7 +52,7 @@ produces a build artifact; run the application natively on the target system.
 The Docker build also runs `deps.sh`, so a fresh clone can be built directly as
 long as Docker has network access during the build.
 
-## Build a musl binary
+## Build musl binaries
 
 Build from the project directory:
 
@@ -60,10 +60,26 @@ Build from the project directory:
 docker build --target export --output type=local,dest=dist .
 ```
 
-The resulting touch tracker executable is written to `dist/touch_ray_demo`. It
-is a Linux musl binary and will not run directly on Windows. It is not fully
-static: X11 and OpenGL remain runtime dependencies on the target musl-based
-Linux system.
+The resulting executables are written to `dist/touch_ray_demo` and
+`dist/webcam_preview`. They are Linux musl binaries and will not run directly on
+Windows. They are not fully static: X11 or Wayland, plus OpenGL/EGL, remain
+runtime dependencies on the target musl-based Linux system.
+
+The Docker build enables both SDL video backends:
+
+- X11, for classic X sessions and XWayland.
+- Wayland, for native Wayland sessions.
+
+SDL selects the video driver at runtime. To force one while testing on the
+target machine:
+
+```sh
+SDL_VIDEODRIVER=x11 ./touch_ray_demo
+SDL_VIDEODRIVER=wayland ./touch_ray_demo
+```
+
+The build does not detect the Docker host display server, because Docker builds
+can run on a different machine than the final runtime target.
 
 ## Build on Windows
 
