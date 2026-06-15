@@ -5,11 +5,52 @@ This repository builds two native applications:
 - `touch_ray_demo`: the multi-touch tracker.
 - `webcam_preview`: a webcam preview rendered through raylib using SDL3 camera frames.
 
-No extra webcam library is required. SDL3 provides the camera API and is already
-vendored in `SDL-release-3.4.10`; raylib is already vendored in `raylib-6.0`.
+No extra webcam library is required. SDL3 provides the camera API. The project
+expects SDL and raylib to be present in `SDL-release-3.4.10` and `raylib-6.0`.
+
+## Install dependencies
+
+Fetch the pinned GitHub dependencies into the folders expected by CMake.
+
+On Windows PowerShell:
+
+```powershell
+.\deps.ps1
+```
+
+On Linux, macOS, or WSL:
+
+```sh
+sh ./deps.sh
+```
+
+If the folders already exist, the scripts leave them alone. To replace them with
+fresh clones, use the force option for your host:
+
+```powershell
+.\deps.ps1 -Force
+```
+
+```sh
+sh ./deps.sh --force
+```
+
+Other available commands:
+
+```powershell
+.\deps.ps1 status
+.\deps.ps1 clean
+```
+
+```sh
+sh ./deps.sh status
+sh ./deps.sh clean
+```
 
 The Docker image builds the application on Alpine Linux with musl libc. It only
 produces a build artifact; run the application natively on the target system.
+The Docker build also runs `deps.sh`, so a fresh clone can be built directly as
+long as Docker has network access during the build.
 
 ## Build a musl binary
 

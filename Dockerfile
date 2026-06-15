@@ -3,6 +3,7 @@ FROM alpine:3.22 AS builder
 RUN apk add --no-cache \
         build-base \
         cmake \
+        git \
         ninja \
         pkgconf \
         linux-headers \
@@ -19,6 +20,8 @@ RUN apk add --no-cache \
 
 WORKDIR /src
 COPY . .
+
+RUN sh ./deps.sh
 
 RUN cmake -S . -B build -G Ninja \
         -DCMAKE_BUILD_TYPE=Release \

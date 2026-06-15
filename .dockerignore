@@ -3,6 +3,7 @@ build/
 dist/
 .git/
 .idea/
+.deps-tmp/
 *.exe
 *.obj
 *.o
