@@ -7,3 +7,5 @@ SDL-release-3.4.10/
 .idea
 cmake-build-*/
 touch_canvas_*.png
+touch_accuracy_*.png
+touch_accuracy_log_*.csv

@@ -44,13 +44,15 @@ RUN cmake -S . -B build -G Ninja \
         -DSDL_WAYLAND_SHARED=OFF \
         -DSDL_X11=ON \
         -DSDL_X11_SHARED=OFF \
-    && cmake --build build --target touch_ray_demo webcam_preview touch_canvas --parallel \
-    && file build/touch_ray_demo build/webcam_preview build/touch_canvas \
+    && cmake --build build --target touch_ray_demo webcam_preview touch_canvas touch_accuracy --parallel \
+    && file build/touch_ray_demo build/webcam_preview build/touch_canvas build/touch_accuracy \
     && ! ldd build/touch_ray_demo \
     && ! ldd build/webcam_preview \
-    && ! ldd build/touch_canvas
+    && ! ldd build/touch_canvas \
+    && ! ldd build/touch_accuracy
 
 FROM scratch AS export
 COPY --from=builder /src/build/touch_ray_demo /touch_ray_demo
 COPY --from=builder /src/build/webcam_preview /webcam_preview
 COPY --from=builder /src/build/touch_canvas /touch_canvas
+COPY --from=builder /src/build/touch_accuracy /touch_accuracy
