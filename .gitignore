@@ -6,3 +6,4 @@ SDL-release-3.4.10/
 .deps-tmp/
 .idea
 cmake-build-*/
+touch_canvas_*.png

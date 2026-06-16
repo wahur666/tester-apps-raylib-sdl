@@ -76,7 +76,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 Write-Host "Building native applications..."
-& $cmake --build $buildDirectory --config Release --target touch_ray_demo webcam_preview --parallel
+& $cmake --build $buildDirectory --config Release --target touch_ray_demo webcam_preview touch_canvas --parallel
 
 if ($LASTEXITCODE -ne 0) {
     throw "Build failed with exit code $LASTEXITCODE."
@@ -84,7 +84,7 @@ if ($LASTEXITCODE -ne 0) {
 
 New-Item -ItemType Directory -Path $outputDirectory -Force | Out-Null
 
-foreach ($name in @("touch_ray_demo", "webcam_preview")) {
+foreach ($name in @("touch_ray_demo", "webcam_preview", "touch_canvas")) {
     $executable = Join-Path $buildDirectory "$name.exe"
     if (-not (Test-Path -LiteralPath $executable -PathType Leaf)) {
         throw "Build completed but the executable was not found at $executable."

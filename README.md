@@ -1,8 +1,9 @@
 # Touch Ray Demo
 
-This repository builds two native applications:
+This repository builds three native applications:
 
 - `touch_ray_demo`: the multi-touch tracker.
+- `touch_canvas`: a touch drawing canvas with drawing export and screenshot buttons.
 - `webcam_preview`: a webcam preview rendered through raylib using SDL3 camera frames.
 
 No extra webcam library is required. SDL3 provides the camera API. The project
@@ -65,10 +66,11 @@ Build from the project directory:
 docker build --target export --output type=local,dest=dist/linux-musl .
 ```
 
-The resulting executables are written to `dist/linux-musl/touch_ray_demo` and
-`dist/linux-musl/webcam_preview`. They are Linux musl binaries and will not run
-directly on Windows. The Docker build fails if `ldd` can inspect them as dynamic
-executables, so there should be no runtime dependency on the musl loader.
+The resulting executables are written to `dist/linux-musl/touch_ray_demo`,
+`dist/linux-musl/touch_canvas`, and `dist/linux-musl/webcam_preview`. They are
+Linux musl binaries and will not run directly on Windows. The Docker build fails
+if `ldd` can inspect them as dynamic executables, so there should be no runtime
+dependency on the musl loader.
 
 The static musl build still needs a compatible running display server at
 runtime. It can talk to X11/XWayland or Wayland, but it cannot create a display
@@ -84,8 +86,8 @@ the musl build.
 docker build -f Dockerfile.glibc --target export --output type=local,dest=dist/linux-glibc .
 ```
 
-The resulting executables are written to `dist/linux-glibc/touch_ray_demo` and
-`dist/linux-glibc/webcam_preview`.
+The resulting executables are written to `dist/linux-glibc/touch_ray_demo`,
+`dist/linux-glibc/touch_canvas`, and `dist/linux-glibc/webcam_preview`.
 
 Both Docker builds enable both SDL video backends:
 
@@ -126,7 +128,8 @@ Use `-Clean` to remove the previous release build before compiling:
 .\build-windows.ps1 -Clean
 ```
 
-The executables are copied to `dist\windows\touch_ray_demo.exe` and
-`dist\windows\webcam_preview.exe`. The script uses tools available on `PATH`, or
-falls back to CLion's bundled CMake, Ninja, and MinGW toolchain when CLion is
-installed in its default per-user location.
+The executables are copied to `dist\windows\touch_ray_demo.exe`,
+`dist\windows\touch_canvas.exe`, and `dist\windows\webcam_preview.exe`. The
+script uses tools available on `PATH`, or falls back to CLion's bundled CMake,
+Ninja, and MinGW toolchain when CLion is installed in its default per-user
+location.
